@@ -1,13 +1,6 @@
 import os
 import sys
 
-try:
-    from groq import Groq
-except ImportError as exc:
-    raise ImportError(
-        "Missing dependency: install the 'groq' package (e.g., `pip install groq`)."
-    ) from exc
-
 
 def _normalize_key(raw_key):
     key = raw_key.strip()
@@ -44,6 +37,13 @@ def _get_api_key(force_prompt=False):
 def generate_response(
     prompt, temperature=0.7, max_tokens=65536, model="openai/gpt-oss-20b"
 ):
+    try:
+        from groq import Groq
+    except ImportError:
+        return (
+            "Missing dependency: install the 'groq' package (e.g., `pip install groq`). "
+            "On Streamlit Cloud, add it to requirements.txt."
+        )
     while True:
         api_key = _get_api_key(force_prompt=False)
         client = Groq(api_key=api_key)
